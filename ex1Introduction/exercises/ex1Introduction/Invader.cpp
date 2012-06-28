@@ -87,7 +87,8 @@ bool Invader::update(float delta){
 	// is alife -> move 
 	if(!isDying && !isDead){
 		position += direction*delta;
-		if(position.x < 0 || Game::FIELD_WIDTH < position.x) {
+		if( (position.x < 0 && direction.x < 0) 
+			|| (Game::FIELD_WIDTH < position.x && direction.x > 0)) {
 			return true;
 		} 
 	} 

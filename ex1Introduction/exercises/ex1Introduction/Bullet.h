@@ -23,6 +23,7 @@ public:
 	void update(float delta);
 
 	float getSize(){return size;}
+	/** returns true if this bullet was shot by an invader*/
 	bool shotByEnemy(){return isEnemy;}
 };
 

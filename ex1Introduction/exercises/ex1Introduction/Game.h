@@ -7,6 +7,10 @@
 #include "Invader.h"
 #include "Bullet.h"
 
+#include <oogl/gl_error.h>
+   
+#include <oogl/Model.h>
+
 class Game
 {
 
@@ -36,6 +40,8 @@ private:
 	Bullet* shot;
 
 	glm::vec3 invaderDirection;
+
+	oogl::Model* shipModel;
 
 	void spawnInvaders();
 

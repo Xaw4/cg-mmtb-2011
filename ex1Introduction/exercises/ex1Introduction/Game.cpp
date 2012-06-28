@@ -16,7 +16,7 @@ using std::vector;
 
 
 
-const float Game::FIELD_WIDTH = 13;
+const float Game::FIELD_WIDTH = 21;
 const float Game::FIELD_HEIGHT= 20;
 
 const float Game::DEATH_DISTANCE= 4;
@@ -31,8 +31,10 @@ const float Game::DYING_TIME = 0.5f;
 Game::Game() :
 		shot(0),
 		invaderDirection(3.0f, 0, 0.3f)
+		
 {
 	spawnInvaders();
+	shipModel = oogl::loadModel("models/fighter.3ds", oogl::Model::LOAD_SET_SMOOTHING_GROUP);
 }
 
 
@@ -41,6 +43,8 @@ Game::~Game()
 	if(shot){
 		delete shot;
 	}
+
+	delete shipModel;
 }
 
 void Game::start(){
@@ -95,7 +99,7 @@ void Game::draw(){
 		0);*/
 	glPushMatrix();{
 
-		vec3 eye(player.position + vec3(0, 5.0f, 5));
+		vec3 eye(player.position + vec3(0, 4.0f, 5.0f));
 		vec3 lookat(player.position + vec3(0, 0, -Game::FIELD_HEIGHT*(2/3)));
 		
 		
