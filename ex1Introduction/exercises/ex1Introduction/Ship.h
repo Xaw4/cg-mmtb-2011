@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 
+#include <oogl/Model.h>
 
 class Ship
 {
@@ -27,7 +28,7 @@ private:
 public:
 
 	glm::vec3 position;
-
+	static oogl::Model* model;
 	Ship();
 	~Ship();
 

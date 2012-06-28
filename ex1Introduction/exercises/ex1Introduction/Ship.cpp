@@ -8,13 +8,16 @@
 #include <GL/glu.h>		// OpenGL Utility header
 #include <GL/glut.h>	// GLUT header
 
+#include <oogl/gl_error.h>
+#include <oogl/timer.h>
+
 #include <glm/gtx/random.hpp>
 
 using glm::vec3;
 
 const float Ship::speed = 10.0f;
 
-
+oogl::Model* Ship::model = 0;
 
 Ship::Ship() :
 	position(Game::FIELD_WIDTH/2, 0, 0),
@@ -55,7 +58,6 @@ void Ship::die(){
 
 void Ship::draw(){
 	glPushMatrix();{
-
 		glTranslatef(position.x, position.y, position.z);
 		if(!isDying){
 			if(movesLeft){
@@ -63,11 +65,17 @@ void Ship::draw(){
 			} else if(movesRight){
 				glRotatef(-20, 0, 0, 1);
 			}
-		
+			// compensate that the model is schief
+			glRotatef(-90, 1, 0, 0);
+
+			if(model){
+				model->render();
+			} else {
 			glColor3f(0.1f, 0.8f, 0.1f);
 			glutSolidCube(size*2);
 			glColor3f(0.8f, 0.1f, 0.1f);
 			glutWireCube(size*2);
+			}
 
 		} else {// if dying -> draw deathanimation
 
