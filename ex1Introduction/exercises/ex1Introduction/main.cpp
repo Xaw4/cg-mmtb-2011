@@ -23,6 +23,11 @@ using std::endl;
 int windowWidth=800;
 int windowHeight=600;
 
+
+//oogl::Model *mShip = NULL;
+std::auto_ptr<oogl::Model> modelShip;
+std::auto_ptr<oogl::Model> modelInvaders;
+
 Game game;
 
 void cleanup();
@@ -32,23 +37,26 @@ void update(int);
 
 void init() {
 	glEnable(GL_DEPTH_TEST); // we enable the depth test, to handle occlusions
-
+	modelInvaders.reset(oogl::loadModel("models/space_frigate/space_frigate_0.3ds"));
+	modelShip.reset(oogl::loadModel("models/shipA/shipA_3DS.3ds"));
+	glDepthFunc(GL_LESS);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+	glBlendEquation(GL_FUNC_ADD);
 	// enable lighting
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	glEnable(GL_COLOR_MATERIAL);
 
-
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-
-	
+	Invader::model = modelInvaders.get();
+	Ship::model = modelShip.get();
 
 
 	game.setState(1);
 }
 
-
+//oogl::Model *mShip = NULL;
 /**
  * called when a frame should be rendered
  */
@@ -63,6 +71,7 @@ void display() {
 
 	glPushMatrix();{
 		game.draw();
+		//modelShip->render();
 	}glPopMatrix();
 
 

@@ -7,6 +7,8 @@
 
 #include <glm/glm.hpp>
 
+#include <oogl/Model.h>
+
 namespace InvaderMaterial{
 
 	const float ambient[] = {.1f,0,0, 1.0f};
@@ -48,9 +50,10 @@ private:
 	//the direction this invader is moving (multi-directional speed)
 	glm::vec3 direction;
 
+	
+public:	glm::vec3 position;
 
-public:
-	glm::vec3 position;
+	static oogl::Model* model;
 
 	Invader(glm::vec3 position, glm::vec3 direction);
 	~Invader();

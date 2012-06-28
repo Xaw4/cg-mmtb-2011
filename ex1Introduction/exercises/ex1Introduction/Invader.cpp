@@ -14,6 +14,8 @@
 
 using glm::vec3;
 
+oogl::Model* Invader::model = 0;
+
 Invader::Invader(glm::vec3 position, glm::vec3 direction):
 	position(position),
 	size(0.6f),
@@ -40,15 +42,19 @@ void Invader::draw(){
 	glPushMatrix();{
 
 		glTranslatef(position.x, position.y, position.z);
-		
+
 		// if alive -> draw regular
 		if(!isDying){
-			InvaderMaterial::setMaterial();
+			glRotatef(90, 0, 0, 1);
+			if(model){
+				model->render();
 
-			glColor3f(0.2f, 0.0f, 0.2f);
-			glutSolidSphere(size, 30, 30);
-			glColor3f(0.8f, 0.1f, 0.1f);
-			glutWireCube(size*2);
+			} else {
+				glColor3f(0.2f, 0.0f, 0.2f);
+				glutSolidCube(size*2);
+				glColor3f(0.8f, 0.1f, 0.1f);
+				glutWireCube(size*2);
+			}
 		} else { // if dying -> draw deathanimation
 
 
