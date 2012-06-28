@@ -10,9 +10,10 @@
 #include <oogl/gl_error.h>
    
 #include <oogl/Model.h>
-
-class Game
-{
+/**
+	this class manages the whole logic
+**/
+class Game{
 
 private:
 
