@@ -43,8 +43,10 @@ void Invader::draw(){
 		
 		// if alive -> draw regular
 		if(!isDying){
+			InvaderMaterial::setMaterial();
+
 			glColor3f(0.2f, 0.0f, 0.2f);
-			glutSolidCube(size*2);
+			glutSolidSphere(size, 30, 30);
 			glColor3f(0.8f, 0.1f, 0.1f);
 			glutWireCube(size*2);
 		} else { // if dying -> draw deathanimation

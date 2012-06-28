@@ -11,6 +11,7 @@
 #include <oogl/timer.h>
 
 #include <oogl/Model.h>
+#include <oogl/Image.h>
 
 #include <glm/glm.hpp>
 
@@ -30,11 +31,21 @@ float getDeltaTime();
 void update(int);
 
 void init() {
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST); // we enable the depth test, to handle occlusions
 
+	// enable lighting
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_COLOR_MATERIAL);
 
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+
+	
+
+
+	game.setState(1);
 }
 
 
@@ -44,15 +55,16 @@ void init() {
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(70, ((float)windowWidth)/windowHeight,0.1f, 100);
+
 	glMatrixMode(GL_MODELVIEW);
 
 	glPushMatrix();{
 		game.draw();
 	}glPopMatrix();
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(70, ((float)windowWidth)/windowHeight,0.1f, 100);
 
 	LOG_GL_ERRORS();
 	glutSwapBuffers();
@@ -66,6 +78,7 @@ void display() {
 void reshape(int w, int h) {
 	windowWidth = w;
 	windowHeight = h;
+	game.setAspectRatio(w/(float)h);
 
 	glViewport(0, 0, w, h);
 
@@ -121,7 +134,7 @@ void keyboard(unsigned char key, int x, int y) {
 			game.setState(0);
 			break;
 		}
-
+		break;
 	default:
 		
 		cout << "Not assigned: " << key << endl;
@@ -208,7 +221,7 @@ int main(int argc, char** argv) {
 
 
 
-
+/// returns the time difference in seconds since the last call of it
 float getDeltaTime(){
 	// I am aware, that on the first call of this function it will
 	// return (almost) zero - but just on the first call
