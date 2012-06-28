@@ -34,7 +34,7 @@ Game::Game() :
 		
 {
 	spawnInvaders();
-	shipModel = oogl::loadModel("models/fighter.3ds", oogl::Model::LOAD_SET_SMOOTHING_GROUP);
+	//shipModel = oogl::loadModel("models/fighter.3ds", oogl::Model::LOAD_SET_SMOOTHING_GROUP);
 }
 
 
@@ -44,7 +44,7 @@ Game::~Game()
 		delete shot;
 	}
 
-	delete shipModel;
+	//delete shipModel;
 }
 
 void Game::start(){

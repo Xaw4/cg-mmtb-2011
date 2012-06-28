@@ -9,7 +9,8 @@
 
 #include <oogl/gl_error.h>
    
-#include <oogl/Model.h>
+// #include <oogl/Model.h>
+
 /**
 	this class manages the whole logic
 **/
@@ -42,7 +43,7 @@ private:
 
 	glm::vec3 invaderDirection;
 
-	oogl::Model* shipModel;
+	//oogl::Model* shipModel;
 
 	void spawnInvaders();
 
