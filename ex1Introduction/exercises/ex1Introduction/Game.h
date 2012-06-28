@@ -7,6 +7,9 @@
 #include "Invader.h"
 #include "Bullet.h"
 
+/**
+	this class manages the whole logic
+**/
 class Game
 {
 
