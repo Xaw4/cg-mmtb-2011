@@ -1,0 +1,10 @@
+Invaders:
+Dieses Spiel ist schwer inspiriert von "Space Invaders", man könnte es fast als Klon bezeichnen.
+
+Man sitzt in einem Raumschiff und muss versuchen alle Invader zu stoppen.
+Die Invader bewegen sich im zickzack zu einem hin (Zickzack: "Dreiecksform" und nicht "Vierecksform" wie im Original).
+
+Mit W und A kann man sich nach links oder rechts bewegen, um den gegnerischen Schüssen auszuweichen, 
+oder selbst welche mit S oder Space zu platzieren.
+
+mit N kann ein neues Spiel gestartet werden, mit P kann es pausiert werden.

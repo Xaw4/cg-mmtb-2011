@@ -8,7 +8,7 @@
 #include "Bullet.h"
 
 #include <oogl/gl_error.h>
-   
+
 // #include <oogl/Model.h>
 
 /**
@@ -33,6 +33,7 @@ private:
 
 	Ship player;
 
+	// container for all invaders (dead invaders will be removed)
 	std::vector<Invader> invaders;
 
 	//vector of invader bullets
@@ -41,7 +42,11 @@ private:
 	// bullet player is just shooting
 	Bullet* shot;
 
+	/// initial direction for invaders
 	glm::vec3 invaderDirection;
+
+	/// used for the perspective proj in the draw func.
+	float aspectRatio;
 
 	//oogl::Model* shipModel;
 
@@ -59,9 +64,13 @@ public:
 	// the time a player or Invader needs to die (death-animation)
 	static const float DYING_TIME;
 
+	static GLuint PAUSETEX;
+
 	Game();
 	~Game();
 
+	/// (re)starts the game (deletes shots and invaders, replaceses them
+	/// and renews the player and sets gamestate to started
 	void start();
 	
 	// functions to provide an interface to move the player
@@ -72,11 +81,18 @@ public:
 	void draw();
 	void drawInvaders();
 	void drawBullets();
+
+	void drawPause();
+
 	void update(float delta);
 	void updateInvaders(float delta);
 	void shoot();
 
 	int getState(){ return gameState; }
 	void setState(int state){ gameState = state; } 
+
+	float getAspectRatio(){ return aspectRatio; }
+	void setAspectRatio(float ar){ aspectRatio = ar; }
+
 };
 

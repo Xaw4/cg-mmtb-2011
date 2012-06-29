@@ -36,30 +36,24 @@ float getDeltaTime();
 void update(int);
 
 void init() {
-
-	//std::auto_ptr<oogl::Image> image(oogl::loadImage("img/bg.jpg"));
-
-
+	glEnable(GL_DEPTH_TEST); // we enable the depth test, to handle occlusions
 	modelInvaders.reset(oogl::loadModel("models/space_frigate/space_frigate_0.3ds"));
 	modelShip.reset(oogl::loadModel("models/shipA/shipA_3DS.3ds"));
-	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
-
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 	glBlendEquation(GL_FUNC_ADD);
-
 	// enable lighting
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	glEnable(GL_COLOR_MATERIAL);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	//mShip = oogl::loadModel("models/NabooFighter.3ds", oogl::Model::LOAD_NO_NORMALIZATION | oogl::Model::LOAD_SET_SMOOTHING_GROUP);
-
-
 	Invader::model = modelInvaders.get();
 	Ship::model = modelShip.get();
+
+
+	game.setState(1);
 }
 
 //oogl::Model *mShip = NULL;
@@ -69,6 +63,10 @@ void init() {
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(70, ((float)windowWidth)/windowHeight,0.1f, 100);
+
 	glMatrixMode(GL_MODELVIEW);
 
 	glPushMatrix();{
@@ -76,9 +74,6 @@ void display() {
 		//modelShip->render();
 	}glPopMatrix();
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(70, ((float)windowWidth)/windowHeight,0.1f, 100);
 
 	LOG_GL_ERRORS();
 	glutSwapBuffers();
@@ -92,6 +87,7 @@ void display() {
 void reshape(int w, int h) {
 	windowWidth = w;
 	windowHeight = h;
+	game.setAspectRatio(w/(float)h);
 
 	glViewport(0, 0, w, h);
 
@@ -147,7 +143,7 @@ void keyboard(unsigned char key, int x, int y) {
 			game.setState(0);
 			break;
 		}
-
+		break;
 	default:
 		
 		cout << "Not assigned: " << key << endl;
@@ -234,7 +230,7 @@ int main(int argc, char** argv) {
 
 
 
-
+/// returns the time difference in seconds since the last call of it
 float getDeltaTime(){
 	// I am aware, that on the first call of this function it will
 	// return (almost) zero - but just on the first call

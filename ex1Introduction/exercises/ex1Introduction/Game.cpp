@@ -10,6 +10,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtx/random.hpp>
+#include <oogl/Image.h>
 
 using glm::vec3;
 using std::vector;
@@ -28,13 +29,46 @@ const float Game::INVADER_SPAN = 1.7f;
 
 const float Game::DYING_TIME = 0.5f;
 
+
+GLuint Game::PAUSETEX = -1;
+
 Game::Game() :
 		shot(0),
-		invaderDirection(3.0f, 0, 0.3f)
-		
+		invaderDirection(3.0f, 0, 0.3f),
+		aspectRatio(4/3.0f)
 {
-	spawnInvaders();
 	//shipModel = oogl::loadModel("models/fighter.3ds", oogl::Model::LOAD_SET_SMOOTHING_GROUP);
+	start();
+
+	/// load texture
+
+	//load a image using the library and devil
+		std::auto_ptr<oogl::Image> image(oogl::loadImage("models/R2Head.jpg"));
+		glGenTextures(1, &Game::PAUSETEX); //generate a new texture
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, Game::PAUSETEX); //bind our texture
+
+		//what should be done, if you want to access a texture outside the normal 0..1 range?
+		//one of GL_REPEAT, GL_CLAMP, GL_MIRRORED_REPEAT, GL_CLAMP_TO_BORDER
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		//set texture interpolation method to use linear interpolation (no MIPMAPS)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+		//define the texture and load data
+		glTexImage2D(GL_TEXTURE_2D,
+			0, //mip map level 0..top
+			GL_RGBA, //internal format of the data in memory
+			image->getWidth(),
+			image->getHeight(),
+			0,//border width in pixels (can either be 1 or 0)
+			image->getFormat(),	// Image format (i.e. RGB, RGBA, BGR etc.)
+			image->getType(),// Image data type
+			image->getData());// The actual image data itself
+
+		glBindTexture(GL_TEXTURE_2D, 0); //unbind again
 }
 
 
@@ -98,24 +132,84 @@ void Game::draw(){
 		-Game::FIELD_HEIGHT,
 		0);*/
 	glPushMatrix();{
+		if(gameState==0){ // playing
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			gluPerspective(70, aspectRatio, 0.1f, 100);
 
-		vec3 eye(player.position + vec3(0, 4.0f, 5.0f));
-		vec3 lookat(player.position + vec3(0, 0, -Game::FIELD_HEIGHT*(2/3)));
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+			vec3 eye(player.position + vec3(0, 4.0f, 5.0f));
+			vec3 lookat(player.position + vec3(0, 0, -Game::FIELD_HEIGHT*(2/3)));
 		
 		
-		//std::cout << "eye: " << eye.x << "," << eye.y << "," << eye.y << std::endl;
-		//std::cout << "lookat: " << lookat.x << "," << lookat.y << "," << lookat.y << std::endl;
+			//std::cout << "eye: " << eye.x << "," << eye.y << "," << eye.y << std::endl;
+			//std::cout << "lookat: " << lookat.x << "," << lookat.y << "," << lookat.y << std::endl;
 
-		gluLookAt(
-			eye.x, eye.y, eye.z,
-			lookat.x, lookat.y, lookat.z,
-			0,1,0);
+			gluLookAt(
+				eye.x, eye.y, eye.z,
+				lookat.x, lookat.y, lookat.z,
+				0,1,0);
 
-		player.draw();
-		drawInvaders();
-		drawBullets();
 
-		if(shot) shot->draw();
+			if(shot) shot->draw();
+
+			drawInvaders();
+			drawBullets();
+
+			player.draw();
+		} else if(gameState==1){ //paused
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho(0, 1, 0, 1, 
+					0, 1);
+			// we now hvae a normalized drawing room (0..1 width, 0..1 height, 0..1 depth)
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+			glPushMatrix();
+			
+			glDisable(GL_LIGHTING);
+
+			glEnable(GL_TEXTURE_2D);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, PAUSETEX);
+
+			glEnable(GL_COLOR_MATERIAL); //use vertex colors instead of material colors
+			glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE); //use the vertex color as diffuse color
+			
+			glBegin(GL_QUADS);{
+
+				glColor4f(1,1,1,1);
+				glNormal3f(0,0,1);
+
+
+				glTexCoord2f(0,0);
+				glVertex3f(0,0,0.5f);
+
+				glTexCoord2f(0,1);
+				glVertex3f(0,1,0.5f);
+
+				glTexCoord2f(1,1);
+				glVertex3f(1,1,0.5f);
+
+				glTexCoord2f(1,0);
+				glVertex3f(1,0,0.5f);
+
+			}glEnd();
+
+			glDisable(GL_COLOR_MATERIAL);
+
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glDisable(GL_TEXTURE_2D);
+			
+			
+			glEnable(GL_LIGHTING);
+
+			glPopMatrix();
+			
+		}
 
 	}glPopMatrix();
 
@@ -135,6 +229,10 @@ void Game::drawBullets(){
 		it->draw();
 		++it;
 	}
+}
+
+void Game::drawPause(){
+
 }
 
 void Game::update(float delta){
